@@ -1,24 +1,4 @@
 ###
-KWin - the KDE window manager
-This file is part of the KDE project.
-
-Copyright (C) 2012 Mathias Gottschlag <mgottschlag@gmail.com>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-###
-
-###
 Class which manages all layouts, connects the various signals and handlers
 and implements all keyboard shortcuts.
 @class
@@ -40,11 +20,9 @@ TilingManager = ->
 #        GridLayout,
 #        MaximizedLayout,
 #        FloatingLayout
-  i = 0
 
-  while i < @availableLayouts.length
+  for i in [0...@availableLayouts.length]
     @availableLayouts[i].index = i
-    i++
   
   ###
   Number of desktops in the system.
@@ -91,11 +69,8 @@ TilingManager = ->
   # Read the script settings
   # TODO (this is currently not supported by kwin)
   # Create the various layouts, one for every desktop
-  i = 0
-
-  while i < @desktopCount
+  for i in [0...@desktopCount]
     @_createDefaultLayouts i
-    i++
   @layouts[@_currentDesktop][@_currentScreen].activate()
   
   # Connect the tile list signals so that new tiles are added to the layouts
@@ -200,12 +175,9 @@ TilingManager.getTilingArea = (desktop, screen) ->
 
 TilingManager::_createDefaultLayouts = (desktop) ->
   screenLayouts = []
-  j = 0
-
-  while j < @screenCount
+  for i in [0...@screenCount]
     area = TilingManager.getTilingArea(desktop, j)
     screenLayouts[j] = new Tiling(area, @defaultLayout)
-    j++
   @layouts[desktop] = screenLayouts
 
 TilingManager::_getCurrentLayoutType = ->
@@ -256,23 +228,15 @@ TilingManager::_onNumberDesktopsChanged = ->
   # Remove tiles from desktops which do not exist any more (we only have to
   # care about tiles shown on all desktops as all others have been moved away
   # from the desktops by kwin before)
-  i = newDesktopCount
-
-  while i < @desktopCount
+  for i in [newDesktopCount...@desktopCount]
     onAllDesktops.forEach (tile) ->
       @layouts[i][tile.screen].removeTile tile
-
-    i++
   
   # Add new desktops
-  i = @desktopCount
-
-  while i < newDesktopCount
+  for i in [@desktopCount...newDesktopCount]
     @_createDefaultLayouts i
     onAllDesktops.forEach (tile) ->
       @layouts[i][tile.screen].addTile tile
-
-    i++
   
   # Remove deleted desktops
   layouts.length = newDesktopCount  if @desktopCount > newDesktopCount
@@ -282,27 +246,18 @@ TilingManager::_onNumberScreensChanged = ->
   
   # Add new screens
   if @screenCount < workspace.numScreens
-    i = 0
-
-    while i < @desktopCount
-      j = @screenCount
-
-      while j < workspace.numScreens
+    for i in [0...@desktopCount]
+      for j in [@screenCount...workspace.numScreens]
         area = TilingManager.getTilingArea(i, j)
         @layouts[i][j] = new Tiling(area, @defaultLayout)
         
         # Activate the new layout if necessary
         @layouts[i][j].activate()  if i is workspace.currentDesktop - 1
-        j++
-      i++
   
   # Remove deleted screens
   if @screenCount > workspace.numScreens
-    i = 0
-
-    while i < @desktopCount
+    for i in [0...@desktopCount]
       @layouts[i].length = workspace.numScreens
-      i++
   @screenCount = workspace.numScreens
 
 TilingManager::_onTileScreenChanged = (tile, oldScreen, newScreen) ->
@@ -417,10 +372,5 @@ TilingManager::_getLayouts = (desktop, screen) ->
   else if desktop is 0
     []
   else if desktop is -1
-    result = []
-    i = 0
-
-    while i < @desktopCount
-      result.push @layouts[i][screen]
-      i++
-    result
+    for i in [0...@desktopCount]
+      @layouts[i][screen]

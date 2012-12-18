@@ -1,24 +1,4 @@
 ###
-KWin - the KDE window manager
-This file is part of the KDE project.
-
-Copyright (C) 2012 Mathias Gottschlag <mgottschlag@gmail.com>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-###
-
-###
 Class which arranges the windows in a spiral with the largest window filling
 the left half of the screen.
 ###
@@ -39,13 +19,9 @@ SpiralLayout::onLayoutAreaChange = (oldArea, newArea) ->
 SpiralLayout::resetTileSizes = ->
   
   # Simply erase all tiles and recreate them to recompute the initial sizes
-  tileCount = @tiles.length
-  @tiles.length = 0
-  i = 0
-
-  while i < tileCount
+  for i in [0...@tiles.length]
     addTile()
-    i++
+  @tiles.length = 0
 
 SpiralLayout::addTile = ->
   print "SpiralLayout: addTile"

@@ -1,47 +1,27 @@
 ###
-KWin - the KDE window manager
-This file is part of the KDE project.
-
-Copyright (C) 2012 Mathias Gottschlag <mgottschlag@gmail.com>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-###
-
-###
 Class which implements tiling for a single screen.
 @class
 ###
 Tiling = (screenRectangle, layoutType) ->
   
-  ###
+###
   Tiles which have been added to the layout
-  ###
+###
   @tiles = []
   
-  ###
+###
   Layout type which provided the current layout.
-  ###
+###
   @layoutType = layoutType
   
-  ###
+###
   Layout which specifies window sizes/positions.
-  ###
+###
   @layout = new layoutType(screenRectangle)
   
-  ###
+###
   True if the layout is active.
-  ###
+###
   @active = false
 
 # TODO
@@ -77,7 +57,7 @@ Tiling::removeTile = (tile) ->
   @layout.removeTile tileIndex
   
   # TODO: Unregister tile callbacks
-  @_updateAllTiles()  if @active
+  @_updateAllTiles() if @active
 
 Tiling::swapTiles = (tile1, tile2) ->
   unless tile1 is tile2
@@ -130,10 +110,10 @@ Tiling::getTileGeometry = (x, y) ->
 Tiling::_getTileIndex = (x, y) ->
   i = 0
 
-  while i < @layout.tiles.length
+  for i in [0...@layout.tiles.length]
     tile = @layout.tiles[i]
-    return i  if tile.rectangle.x <= x and tile.rectangle.y <= y and tile.rectangle.x + tile.rectangle.width > x and tile.rectangle.y + tile.rectangle.height > y
-    i++
+    if tile.rectangle.x <= x and tile.rectangle.y <= y and tile.rectangle.x + tile.rectangle.width > x and tile.rectangle.y + tile.rectangle.height > y
+      return i
   -1
 
 Tiling::getTiles = ->
@@ -163,8 +143,8 @@ Tiling::_updateAllTiles = ->
   # Set the position/size of all tiles
   i = 0
 
-  while i < @layout.tiles.length
+  for i in [0...@layout.tiles.length]
     currentRect = @tiles[i].clients[0].geometry
     newRect = @layout.tiles[i].rectangle
-    @tiles[i].setGeometry newRect  if currentRect.x isnt newRect.x or currentRect.y isnt newRect.y or currentRect.width isnt newRect.width or currentRect.height isnt newRect.height
-    i++
+    if currentRect.x isnt newRect.x or currentRect.y isnt newRect.y or currentRect.width isnt newRect.width or currentRect.height isnt newRect.height
+      @tiles[i].setGeometry newRect  

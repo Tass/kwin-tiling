@@ -1,6 +1,7 @@
 ###
 Class which manages connections to a signal and allows for signal/slot event
 handling.
+
 @class
 ###
 Signal = ->
@@ -23,7 +24,7 @@ registered with connect().
 ###
 Signal::disconnect = (f) ->
   index = @connected.indexOf(f)
-  return  if index is -1
+  return if index is -1
   @connected.splice index, 1
 
 
