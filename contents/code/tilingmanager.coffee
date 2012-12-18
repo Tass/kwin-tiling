@@ -64,7 +64,6 @@ TilingManager = ->
   The screen where the current window move operation started.
   ###
   @_movingStartScreen = 0
-  self = this
   
   # Read the script settings
   # TODO (this is currently not supported by kwin)
@@ -74,11 +73,11 @@ TilingManager = ->
   @layouts[@_currentDesktop][@_currentScreen].activate()
   
   # Connect the tile list signals so that new tiles are added to the layouts
-  @tiles.tileAdded.connect (tile) ->
-    self._onTileAdded tile
+  @tiles.tileAdded.connect (tile) =>
+    @_onTileAdded tile
 
-  @tiles.tileRemoved.connect (tile) ->
-    self._onTileRemoved tile
+  @tiles.tileRemoved.connect (tile) =>
+    @_onTileRemoved tile
 
   
   # We need to reset custom client properties first because this might not be
@@ -90,8 +89,8 @@ TilingManager = ->
 
   
   # Create the initial list of tiles
-  existingClients.forEach (client) ->
-    self.tiles.addClient client
+  existingClients.forEach (client) =>
+    @tiles.addClient client
 
   
   # Activate the visible layouts
@@ -100,57 +99,57 @@ TilingManager = ->
 
   
   # Register global callbacks
-  workspace.numberDesktopsChanged.connect ->
-    self._onNumberDesktopsChanged()
+  workspace.numberDesktopsChanged.connect =>
+    @_onNumberDesktopsChanged()
 
-  workspace.numberScreensChanged.connect ->
-    self._onNumberScreensChanged()
+  workspace.numberScreensChanged.connect =>
+    @_onNumberScreensChanged()
 
-  workspace.currentDesktopChanged.connect ->
-    self._onCurrentDesktopChanged()
+  workspace.currentDesktopChanged.connect =>
+    @_onCurrentDesktopChanged()
 
   
   # Register keyboard shortcuts
-  registerShortcut "Next Tiling Layout", "Next Tiling Layout", "Meta+PgDown", ->
-    currentLayout = self._getCurrentLayoutType()
-    nextIndex = (currentLayout.index + 1) % self.availableLayouts.length
-    self._switchLayout workspace.currentDesktop - 1, workspace.activeScreen, nextIndex
+  registerShortcut "Next Tiling Layout", "Next Tiling Layout", "Meta+PgDown", =>
+    currentLayout = @_getCurrentLayoutType()
+    nextIndex = (currentLayout.index + 1) % @availableLayouts.length
+    @_switchLayout workspace.currentDesktop - 1, workspace.activeScreen, nextIndex
 
-  registerShortcut "Previous Tiling Layout", "Previous Tiling Layout", "Meta+PgUp", ->
-    currentLayout = self._getCurrentLayoutType()
+  registerShortcut "Previous Tiling Layout", "Previous Tiling Layout", "Meta+PgUp", =>
+    currentLayout = @_getCurrentLayoutType()
     nextIndex = currentLayout.index - 1
-    nextIndex += self.availableLayouts.length  if nextIndex < 0
-    self._switchLayout workspace.currentDesktop - 1, workspace.activeScreen, nextIndex
+    nextIndex += @availableLayouts.length  if nextIndex < 0
+    @_switchLayout workspace.currentDesktop - 1, workspace.activeScreen, nextIndex
 
-  registerShortcut "Toggle Floating", "Toggle Floating", "Meta+F", ->
+  registerShortcut "Toggle Floating", "Toggle Floating", "Meta+F", =>
     return  unless workspace.activeClient
     tile = tiles.getTile(workspace.activeClient)
     return  unless tile?
-    self.toggleFloating tile
+    @toggleFloating tile
 
-  registerShortcut "Switch Focus Left", "Switch Focus Left", "Meta+H", ->
-    self._switchFocus Direction.Left
+  registerShortcut "Switch Focus Left", "Switch Focus Left", "Meta+H", =>
+    @_switchFocus Direction.Left
 
-  registerShortcut "Switch Focus Right", "Switch Focus Right", "Meta+L", ->
-    self._switchFocus Direction.Right
+  registerShortcut "Switch Focus Right", "Switch Focus Right", "Meta+L", =>
+    @_switchFocus Direction.Right
 
-  registerShortcut "Switch Focus Up", "Switch Focus Up", "Meta+K", ->
-    self._switchFocus Direction.Up
+  registerShortcut "Switch Focus Up", "Switch Focus Up", "Meta+K", =>
+    @_switchFocus Direction.Up
 
-  registerShortcut "Switch Focus Down", "Switch Focus Down", "Meta+J", ->
-    self._switchFocus Direction.Down
+  registerShortcut "Switch Focus Down", "Switch Focus Down", "Meta+J", =>
+    @_switchFocus Direction.Down
 
-  registerShortcut "Move Window Left", "Move Window Left", "Meta+Shift+H", ->
-    self._moveTile Direction.Left
+  registerShortcut "Move Window Left", "Move Window Left", "Meta+Shift+H", =>
+    @_moveTile Direction.Left
 
-  registerShortcut "Move Window Right", "Move Window Right", "Meta+Shift+L", ->
-    self._moveTile Direction.Right
+  registerShortcut "Move Window Right", "Move Window Right", "Meta+Shift+L", =>
+    @_moveTile Direction.Right
 
-  registerShortcut "Move Window Up", "Move Window Up", "Meta+Shift+K", ->
-    self._moveTile Direction.Up
+  registerShortcut "Move Window Up", "Move Window Up", "Meta+Shift+K", =>
+    @_moveTile Direction.Up
 
-  registerShortcut "Move Window Down", "Move Window Down", "Meta+Shift+J", ->
-    self._moveTile Direction.Down
+  registerShortcut "Move Window Down", "Move Window Down", "Meta+Shift+J", =>
+    @_moveTile Direction.Down
 
 Qt.include "signal.js"
 Qt.include "tile.js"
@@ -188,21 +187,20 @@ TilingManager::_onTileAdded = (tile) ->
   
   # Add tile callbacks which are needed to move the tile between different
   # screens/desktops
-  self = this
-  tile.screenChanged.connect (oldScreen, newScreen) ->
-    self._onTileScreenChanged tile, oldScreen, newScreen
+  tile.screenChanged.connect (oldScreen, newScreen) =>
+    @_onTileScreenChanged tile, oldScreen, newScreen
 
-  tile.desktopChanged.connect (oldDesktop, newDesktop) ->
-    self._onTileDesktopChanged tile, oldDesktop, newDesktop
+  tile.desktopChanged.connect (oldDesktop, newDesktop) =>
+    @_onTileDesktopChanged tile, oldDesktop, newDesktop
 
-  tile.movingStarted.connect ->
-    self._onTileMovingStarted tile
+  tile.movingStarted.connect =>
+    @_onTileMovingStarted tile
 
-  tile.movingEnded.connect ->
-    self._onTileMovingEnded tile
+  tile.movingEnded.connect =>
+    @_onTileMovingEnded tile
 
-  tile.movingStep.connect ->
-    self._onTileMovingStep tile
+  tile.movingStep.connect =>
+    @_onTileMovingStep tile
 
   
   # Add the tile to the layouts

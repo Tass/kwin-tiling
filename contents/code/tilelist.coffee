@@ -24,12 +24,11 @@ TileList = ->
   # We connect to the global workspace callbacks which are triggered when
   # clients are added/removed in order to be able to keep track of the
   # new/deleted tiles
-  self = this
-  workspace.clientAdded.connect (client) ->
-    self._onClientAdded client
+  workspace.clientAdded.connect (client) =>
+    @_onClientAdded client
 
-  workspace.clientRemoved.connect (client) ->
-    self._onClientRemoved client
+  workspace.clientRemoved.connect (client) =>
+    @_onClientRemoved client
 
 
 ###
@@ -41,15 +40,14 @@ events when necessary. This function might trigger a tileAdded event.
 ###
 TileList::addClient = (client) ->
   return  if TileList._isIgnored(client)
-  self = this
-  client.tabGroupChanged.connect ->
-    self._onClientTabGroupChanged client
+  client.tabGroupChanged.connect =>
+    @_onClientTabGroupChanged client
 
   
   # We also have to connect other client signals here instead of in Tile
   # because the tile of a client might change over time
-  getTile = (client) ->
-    self.tiles[client.tiling_tileIndex]
+  getTile = (client) =>
+    @tiles[client.tiling_tileIndex]
 
   client.shadeChanged.connect ->
     getTile(client).onClientShadeChanged client
